@@ -18,9 +18,10 @@ window.addEventListener('DOMContentLoaded', event => {
         return;
     }
 
+    const mobileMenuOpen = document.querySelector('#navbarResponsive.show');
     if (window.scrollY === 0) {
         navbarCollapsible.classList.remove('navbar-shrink');
-        navbarLogo.src = navbarLogo.dataset.logoLight;
+        navbarLogo.src = mobileMenuOpen ? navbarLogo.dataset.logoDark : navbarLogo.dataset.logoLight;
     } else {
         navbarCollapsible.classList.add('navbar-shrink');
         navbarLogo.src = navbarLogo.dataset.logoDark;
@@ -46,7 +47,7 @@ window.addEventListener('DOMContentLoaded', event => {
     // Collapse responsive navbar when toggler is visible
     const navbarToggler = document.body.querySelector('.navbar-toggler');
     const responsiveNavItems = [].slice.call(
-        document.querySelectorAll('#navbarResponsive .nav-link')
+        document.querySelectorAll('#navbarResponsive .nav-link:not(.dropdown-toggle)')
     );
     responsiveNavItems.map(function (responsiveNavItem) {
         responsiveNavItem.addEventListener('click', () => {
@@ -55,6 +56,20 @@ window.addEventListener('DOMContentLoaded', event => {
             }
         });
     });
+
+    // Switch to dark logo when mobile menu opens (white background appears), revert on close
+    const navbarCollapse = document.body.querySelector('#navbarResponsive');
+    const navbarLogo = document.querySelector('.navbar-logo');
+    if (navbarCollapse && navbarLogo) {
+        navbarCollapse.addEventListener('show.bs.collapse', () => {
+            navbarLogo.src = navbarLogo.dataset.logoDark;
+        });
+        navbarCollapse.addEventListener('hide.bs.collapse', () => {
+            if (window.scrollY === 0) {
+                navbarLogo.src = navbarLogo.dataset.logoLight;
+            }
+        });
+    }
 
     // Activate SimpleLightbox plugin for portfolio items
     new SimpleLightbox({
